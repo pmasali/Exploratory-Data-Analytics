@@ -1,0 +1,31 @@
+---
+title: "GapMinder_Analysis"
+author: "Prateek Masali"
+date: "2/10/2019"
+output:
+  html_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document.
+
+```{r gapminder}
+gapminder <- read.csv("~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/gapminder.csv")
+summary(gapminder)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r income, echo=FALSE}
+plot(hist(gapminder$life))
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
