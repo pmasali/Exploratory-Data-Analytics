@@ -3,7 +3,7 @@
 *Last Update: 02/10/2019*
 
 ### Project: GapMinder Data analysis
-###### Desription: This project explains the GapMinder data of Life Expectancy over years from 1800-2015 for each countries based on their average income and population. The data also specifies the regions to which each country belong.
+###### Description: This project explains the GapMinder data of Life Expectancy over years from 1800-2015 for each countries based on their average income and population. The data also specifies the regions to which each country belong.
 ##### Data description (fields):
 1. Country: Name of the country
 2. Year: Year (yyyy) ranging from 1800-2015
