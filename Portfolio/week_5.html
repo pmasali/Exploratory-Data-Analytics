@@ -223,12 +223,12 @@ $(document).ready(function () {
 
 <p>Introducing Tideverse package with some of the functions in it</p>
 <pre class="r"><code class="hljs"><span class="hljs-keyword">library</span>(<span class="hljs-string">"tidyverse"</span>)</code></pre>
-<pre><code class="hljs">## ── Attaching packages ────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code class="hljs">## ── Attaching packages ──────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
 <pre><code class="hljs">## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
 ## ✔ tibble  1.4.2     ✔ dplyr   0.7.8
 ## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
 ## ✔ readr   1.1.1     ✔ forcats 0.3.0</code></pre>
-<pre><code class="hljs">## ── Conflicts ───────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+<pre><code class="hljs">## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <p>Creating a table with 4 entries with different data types</p>
@@ -291,7 +291,9 @@ information$DOB[information$No == <span class="hljs-number">4</span>] = <span cl
 <span class="hljs-comment">#parsing date through formatted pieces</span>
 parse_date(information$DOB[information$No == <span class="hljs-number">4</span>], <span class="hljs-string">"%Y-%m-%d"</span>)</code></pre>
 <pre><code class="hljs">## [1] "1988-11-02"</code></pre>
-<pre class="r"><code class="hljs">write_csv(information, <span class="hljs-string">"~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/information.csv"</span>)</code></pre>
+<pre class="r"><code class="hljs"><span class="hljs-comment">#file written to the /Data folder</span>
+write_csv(information, <span class="hljs-string">"~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/information.csv"</span>)
+<span class="hljs-comment">#complete file knitted to HTML and Word (for proper visualization)</span></code></pre>
 
 
 
