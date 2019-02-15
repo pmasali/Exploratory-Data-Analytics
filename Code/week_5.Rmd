@@ -1,0 +1,49 @@
+---
+title: "week_5"
+author: "Prateek Masali"
+date: "2/14/2019"
+output: 
+  html_document:
+    toc: true
+---
+
+Introducing Tideverse package with some of the functions in it
+```{r preparing for analysis}
+library("tidyverse")
+```
+Creating a table with 4 entries with different data types
+```{r }
+information <- read_csv("1,Tom,23,3.4,1,1988/08/28
+         2,Dan,30,3.6,0,1990-07-20
+         3,Sam,27,3.8,0,1988-07-19
+         4,Bill,33,4.0,1,1988-Nov-02", col_names = c("No","Name","age","GPA","Resident","DOB"))
+head(information)
+```
+Working with the data: filtering on valid information using logical parsing
+```{r }
+information$Name[parse_logical(information$Resident) == 1]
+```
+
+```{r }
+#parse_factor returns the values (levels) those are persent in the that field and that are not valid (marked as NA)
+parse_factor(c("Tom","Bill","Ron","Casey"), levels = information$Name)
+#parse_date will return the record that fails the test
+information$DOB <- parse_date(information$DOB)
+#problems function will list the record that fails the parsed field
+problems(information$DOB)
+head(information)
+```
+
+```{r }
+guess_encoding(charToRaw(information$Name))
+```
+```{r}
+library(hms)
+information$DOB[information$No == 4] = '1988-11-02'
+#parsing date through formatted pieces
+parse_date(information$DOB[information$No == 4], "%Y-%m-%d")
+```
+
+```{r}
+write_csv(information, "~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/information.csv")
+```
