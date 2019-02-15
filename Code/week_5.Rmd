@@ -2,9 +2,13 @@
 title: "week_5"
 author: "Prateek Masali"
 date: "2/14/2019"
-output: 
+output:
   html_document:
-    toc: true
+    toc: yes
+  word_document:
+    toc: yes
+  pdf_document:
+    toc: yes
 ---
 
 Introducing Tideverse package with some of the functions in it
@@ -45,5 +49,7 @@ parse_date(information$DOB[information$No == 4], "%Y-%m-%d")
 ```
 
 ```{r}
+#file written to the /Data folder
 write_csv(information, "~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/information.csv")
+#complete file knitted to HTML and Word (for proper visualization)
 ```
