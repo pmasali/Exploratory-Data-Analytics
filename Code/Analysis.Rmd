@@ -5,19 +5,74 @@ date: "2/10/2019"
 output:
   html_document:
     toc: true
+    theme: cosmo
+    highlight: tango
+    df_print: paged
+    code_folding: hide
+    hr { padding: 2px 0 2px 0; }
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+---
 
-This is an R Markdown document.
+## Question
+*To measure the effects of Geographic location, Income or Population on life expectance rate*
+
+---
+
+### Data Description
+- Region/Country fields describes the continent and country the Life expectancy is measured
+- Additionally, Population, Income, and Life expectance is provided for each country from years 1800 to 2015
+
+###### *Income - Gross domestic product per person adjusted for differences in purchasing power (GDP/capita, PPP$ inflation adjusted)*
+###### *Life - The average number of years a newborn child would live if  current mortality pattern were to stay the same*
+###### *population - Population for the given country in the given year  [(Source: GapMinder)](https://www.gapminder.org/data/)*
+
+### Data Preparation
+1. Import the Raw data
+2. Summarize Data
+3. Study the scope
 
 ```{r gapminder}
+#Importing raw data
 gapminder <- read.csv("~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/gapminder.csv")
+#Summary of data
+str(gapminder)
+```
+Here, we study that Country, population, and income are Factors. Life and income are of num data type while year is of int datatype.
+```{r}
+#Study the scope
 summary(gapminder)
+levels(gapminder$Country)
+```
+Looking at the summary, now we know there are 197 countries spread across 6 regions, each having 216 entries for years from 1800 to 2015. The life expectancy ranges from 1 to 84%
+
+---
+
+## Analysis
+
+```{r}
+
+#gapminder_2015 <- gapminder %>% filter(Year==2015)
+#symbols(gapminder_2015$income, gapminder_2015$life, circles = gapminder_2015$population, inches=0.35, fg="white", bg="red", xlab="Income", ylab="Life Expectancy") + scale_x_log10()
+#text(gapminder_2015$income, gapminder_2015$life, gapminder_2015$Country, cex=0.4)
+
+
+```
+
+```{r}
+
+library("plotly")
+p <- gapminder %>%
+              filter(Year==2015) %>%
+                  ggplot(aes(income, life, size = population, color=region)) + geom_point() + scale_x_log10() +
+                  theme_bw()
+ 
+ggplotly(p)
+
 ```
 
 ## Including Plots
