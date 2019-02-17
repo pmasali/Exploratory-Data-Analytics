@@ -1,8 +1,57 @@
 ---
-title: "week_6"
+title: "Pratice codes"
 author: "Prateek Masali"
 date: "2/14/2019"
-output: html_document
+output:
+  html_document:
+    toc: true
+    theme: cosmo
+    highlight: tango
+    df_print: paged
 ---
 
+## Data Structure and Transformation
 
+```{r}
+library("plyr")
+library("matrixStats")
+```
+Using yarrr dataset for this week's practice
+```{r}
+#install.packages("yarrr")
+library("yarrr")
+str(pirates)
+```
+
+```{r}
+#Finding the mean of Pirates Age
+mean(pirates$age)
+#Finding the mean height of female pirates
+mean(pirates$height[pirates$sex == 'female'])
+```
+
+```{r}
+count(pirates$sex)
+# Counting male pirates in yarrr dataset
+count(pirates$sex[pirates$sex == 'male'])
+# Calculating Percent of 'Other' sex in the yarrr dataset using count fuction
+count(pirates$sex[pirates$sex == 'other'])$freq/sum(count(pirates$sex)$freq)*100
+```
+
+
+```{r}
+# Extracting values from collection based on set of the index values
+x <- c(15,20,50,70,80,95)
+x[c(2,6)]
+x[-5]
+```
+```{r}
+#Calculating Mean, Standard Deviation, median absolute deviation and weighted mean.
+sd(x)
+mad(x)
+mean(x)
+median(x)
+# the mean and weighted mean differs as weighted mean account for different populations in the states.
+mean(pirates$weight)
+weighted.mean(pirates$weight,w=pirates$height,na.rm = TRUE)
+```
