@@ -1,5 +1,5 @@
 ---
-title: "Pratice codes"
+title: "Pratice codes - Week 6"
 author: "Prateek Masali"
 date: "2/14/2019"
 output:
@@ -10,6 +10,10 @@ output:
     df_print: paged
 ---
 
+```{r, echo=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
 ## Data Structure and Transformation
 
 ```{r}
@@ -18,7 +22,7 @@ library("matrixStats")
 ```
 Using yarrr dataset for this week's practice
 ```{r}
-#install.packages("yarrr")
+install.packages("yarrr")
 library("yarrr")
 str(pirates)
 ```
@@ -31,11 +35,14 @@ mean(pirates$height[pirates$sex == 'female'])
 ```
 
 ```{r}
-count(pirates$sex)
+# counts Sex wise grouped
+#pirates <- as.data.frame(pirates)
+count(pirates[["sex"]])
 # Counting male pirates in yarrr dataset
-count(pirates$sex[pirates$sex == 'male'])
+count(pirates[["sex"]][pirates$sex == 'male'])
 # Calculating Percent of 'Other' sex in the yarrr dataset using count fuction
-count(pirates$sex[pirates$sex == 'other'])$freq/sum(count(pirates$sex)$freq)*100
+percent_other <- count(pirates$sex[pirates$sex == 'other'])$freq/sum(count(pirates$sex)$freq)*100
+percent_other
 ```
 
 

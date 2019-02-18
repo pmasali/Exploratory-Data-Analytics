@@ -1,30 +1,120 @@
 ---
-title: "week_7"
+title: "Pratice codes - Week 7"
 author: "Prateek Masali"
 date: "2/14/2019"
-output: html_document
+output:
+  html_document:
+    toc: true
+    theme: cosmo
+    highlight: tango
+    df_print: paged
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+## Practical Stats and Data Transformation
+
+### Working with NYCFlights dataset
+```{r}
+# install.packages("nycflights13")
+# install.packages("tidyverse")
+library(nycflights13)
+library(tidyverse)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+### Data transformation Exercises
+```{r}
+# Filtering data for 30th December
+FlightsOn30Dec <- filter(flights, flights$month == "12" & flights$day == "30")
+# there are few NAs in the dep_delay, we can count the number of NAs
+sum(is.na(FlightsOn30Dec$dep_delay))
+#finding mean of the departure delays, also excluding NAs with na.rm = true
+meanOfDepDelays <- mean(FlightsOn30Dec$dep_delay, na.rm = TRUE)
+meanOfDepDelays
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+### Importing Income dataset
+```{r}
+income <- read.csv("~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/income.csv")
+# finding the mean, trimmed mean (0.1), and median. All by excluding na records
+mean(income$M_weekly, na.rm = TRUE)
+mean(income$M_weekly, trim = 0.1, na.rm = TRUE)
+median(income$M_weekly, na.rm = TRUE)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+#install.packages("matrixStats")
+library("matrixStats")
+# since there are NAs, the result is NA.
+# Next, we use weighted median to find the median for M_weekly based on Industry. Same for mean, and we will find that there is a difference between the weighted and the regular way.
+weightedMedian(income$M_weekly, w = income$Industry)
+weightedMedian(income$M_weekly, w = income$Industry, na.rm = TRUE)
+weightedMean(income$M_weekly, w = income$Industry, na.rm = TRUE)
+```
+### Creating custom functions
+```{r}
+# edit(weightedMedian)
+
+# Creating custom function that works similar to weightedMean.
+# -removes NAs and finds the weighted median
+
+weighted_median <- function(x, w, ..., na.rm = FALSE){
+  
+  if(na.rm){
+    
+    df_omit <- na.omit(data.frame(x, w))
+    
+    return(weightedMedian(df_omit$x, df_omit$w))
+    
+  } 
+  
+  weightedMedian(x, w, ...)
+  
+}
+
+#Custom function
+weighted_median(income$M_weekly, w = income$Industry, na.rm = TRUE)
+#Built in function
+weightedMedian(income[["M_weekly"]], w=income[["Industry"]], na.rm = TRUE)
+```
+
+```{r}
+#Standard Deviation
+sd(income$F_workers)
+#IQR is the difference between 75th and 25th quartile
+IQR(income$F_workers)
+#Median Absolute deviation
+mad(income$F_workers)
+```
+
+### Working with dplyr and tibble
+```{r}
+# install.packages("dplyr")
+# install.packages("tibble")
+library(dplyr)
+library(tibble)
+
+income <- as.tibble(income)
+
+MaleIncomeGtr2000 <- filter(income, income$M_weekly > 2000)
+
+income <- mutate(income, diff = income$M_weekly - income$F_weekly)
+income %>% glimpse()
+sd_diff <- sd(income$diff, na.rm = TRUE)
+round(sd_diff,2)
+```
+
+```{r}
+
+library(dplyr)
+by_industry <- group_by(income,Industry)
+Industry <- summarise(by_industry,
+  count = n(),
+  M_workers = mean(income$M_workers, na.rm = TRUE),
+  F_workers = mean(income$F_workers, na.rm = TRUE)
+)
+Industry_Mgmt <- filter(Industry, count > 30, Industry != "Construction")
+
+ggplot(data = Industry_Mgmt, mapping = aes(x = Industry, y = M_workers)) +
+  geom_point(aes(size = count), alpha = 1/3) +
+  geom_smooth(se = FALSE) + labs(title = "Count of workers(Men) across industries", subtitle = "Count displayed for over 40",y = "Mean of total workers(Men)")
+```
+

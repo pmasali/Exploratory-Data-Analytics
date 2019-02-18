@@ -1,30 +1,78 @@
 ---
-title: "week_9"
+title: "Pratice codes - Week 9-10"
 author: "Prateek Masali"
 date: "2/14/2019"
-output: html_document
+output:
+  html_document:
+    toc: true
+    theme: cosmo
+    highlight: tango
+    df_print: paged
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+### Plotting Systems
+```{r}
+plot(12,12) 
+abline(h=12,lwd=2)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+#test data
+X <- c(1, 2, 3, 4, 5, 6, 7)
+Y1 <- c(2, 4, 5, 7, 12, 14, 16)
+Y2 <- c(3, 6, 7, 8, 9, 11, 12)
+Y3 <- c(1, 7, 3, 2, 2, 7, 9)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+#Making a grid of 3x2
+par(mfrow = c(3,2))
+#plotting with different pointing symbols
+plot(X,Y1, pch = 1)
+plot(X,Y2, pch = 2)
+plot(X,Y3, pch = 3)
+plot(X,Y1, pch = 4)
+plot(X,Y2, pch = 15)
+plot(X,Y3, pch = 16)
 ```
 
-## Including Plots
+### Plotting linear model
+```{r}
+library(ggplot2)
+# Using mpg dataset
+ggplot(data = mpg) + geom_point(mapping = aes(x = displ, y = hwy), color = 'blue')
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+#using mtcars dataset
+data(mtcars)
+# Plotting displacement vs horsepower using smooth linear method
+ggplot(mtcars, aes(x=disp, y=hp)) +
+  geom_point() + 
+  geom_smooth(method=lm) +
+  xlab("Displacement (cu.in.)") +
+  ylab("Gross Horsepower") +
+  ggtitle("Displacement to Gross Horsepower")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+### Practicing with test data
+```{r}
+# Create random data
+science <- round(rnorm(100, mean = 15, sd = 5), 1)
+arts <- round(rnorm(100, mean = 20, sd = 2), 1)
+total <- ((100 - science) + (100 - arts))/100
+
+# Create color function from colorRamp2
+subject.colors <- circlize::colorRamp2(breaks = c(0, 50, 100),
+                  colors = c("blue", "green", "red"),
+                  transparency = .3)
+
+# Bottom Plot
+par(mar = c(4, 4, 5, 1))
+plot(x = science, 
+     y = total, 
+     col = subject.colors(science),
+     pch = 16, cex = 1.2, main = "Plot of subject inclination",
+     xlab = "science", ylab = "total")
+
+mtext(text = "Point color indicates inclination towards subject", line = .5, side = 3)
+```
