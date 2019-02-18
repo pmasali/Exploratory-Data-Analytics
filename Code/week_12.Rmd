@@ -1,5 +1,5 @@
 ---
-title: "week_12"
+title: "Pratice codes - Week 12"
 author: "Prateek Masali"
 date: "2/14/2019"
 output:
@@ -14,29 +14,38 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+### Initializing the libraries
 ```{r}
 library("readr")
 # install.packages("COUNT")
 library(COUNT)
 ```
 
+### Importing US EPA data 2017
 ```{r}
 ozone <- read.csv("~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/US EPA data 2017.csv")
+# Getting number of rows and columns
 nrow(ozone)
 ncol(ozone)
+# Getting mean of Observation.Count
 mean(ozone$Observation.Count)
+# Listing unique states and count
 length(unique(ozone$State.Name))
 unique(ozone$State.Name)
-
 ```
-
+### Importing cluster data files
 ```{r}
 cluster1 <- read.csv("~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/clustering_1.txt", header = FALSE, sep = " ")
 cluster2 <- read.csv("~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/cluster_2.txt", header = FALSE, sep = " ")
 cluster3 <- read.csv("~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory-Data-Analytics/Data/cluster_3.txt", header = FALSE, sep = " ")
 
+#creating a data frame using all 3 files and giving columnnames
 clusters <- data.frame(cluster1$V2, cluster2$V2, cluster3$V2)
 colnames(clusters) <- c('c1', 'c2','c3')
+```
+
+### Calculating best number of clusters
+```{r}
 
 # install.packages("NbClust")
 library(NbClust)
@@ -46,6 +55,7 @@ library (cluster)
 library (clustertend)
 # install.packages("factoextra")
 library (factoextra)
-
+# Using k means clustering to evaluate the best number of clusters using gap method
 fviz_nbclust(clusters, kmeans, method = "gap_stat")+ theme_classic()
+# 4 is the Best number of cluters that can be optimal
 ```
