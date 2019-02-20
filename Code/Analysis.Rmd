@@ -57,13 +57,17 @@ gapminder <- read.csv("~/Desktop/Harrisburg University/ANLY 506-90-O/Exploratory
 ```{r summary}
 str(gapminder)
 ```
-Here, we study that Country, population, and income are Factors. Life and income are of num data type while year is of int datatype.
+Here, we study that Country, population, and income are Factors. Life and income are of num data type while year is of int datatype. We notice that population is a number but due to commas, it is turned a factor. hece we clean the data by removing the commas and creating another field as numeric.
 ### Study the scope
 ```{r scope}
 #Overview of complete Gapminder dataset
 summary(gapminder)
 #Number of Unique Countries
 length(unique(gapminder$Country))
+#Cleaning of population field. Removing commas and reloading as numeric in a different dataset without NAs.
+gapminder$population1 <- as.numeric(gsub(",","",gapminder$population))
+gapminder1 <- gapminder %>% filter(!is.na(gapminder$population1))
+
 ```
 
 ---
@@ -82,11 +86,16 @@ hist(gapminder$income)
 summary(unique(gapminder$income))
 weightedMedian(gapminder$income, w = gapminder$region, na.rm = TRUE)
 weightedMean(gapminder$income, w = gapminder$region, na.rm = TRUE)
+
+d <- ggplot(gapminder1, aes(x = population1, y = income))
+d + geom_point()+geom_smooth(method = "lm") + scale_x_continuous(labels = scales::comma) 
+
 ```
 Looking at the histogram, a high frequency of *income* lay in the range below **50000**. Further, when we look at the ranges summary, we find that the mean and the median lies in the 2nd quadrant with minimum value of 142 and maximum of 182668<br />
 However, things change drastically, when we look at the weighted median and weighted mean based on the *region*. the Median reduces from **6651** to **1457**, while the Mean reduces from **12397** to **4631*.<br />
 We can say that the *income* ranges are different in different *regions*.
 <br />
+From the plot above (population vs income), we can also find that as the population increases, the income hardly increases for most, while is linear for some. However, if the population is lower always, the income increases exponentially.
 
 ###Life Expectancy
 
@@ -96,8 +105,82 @@ hist(gapminder$life)
 summary(gapminder$life)
 weightedMedian(gapminder$life, w = gapminder$region, na.rm = TRUE)
 weightedMean(gapminder$life, w = gapminder$region, na.rm = TRUE)
+
+e <- ggplot(gapminder1, aes(x = life, y = income))
+e + geom_point()+geom_smooth(method = "lm") + scale_x_continuous(labels = scales::comma) 
+
 ```
 <br />There seems to be a high frequency of *life expectancy* in the range of **25-35 years**<br />
+In the next graph, we can see that the life expectancy grows regardless of the income growth. However, as the life expectancy grows past 60, there is a big growth in income.
+
+### Population
+
+```{r population}
+median(gapminder1$population1)
+mean(gapminder1$population1)
+weightedMedian(gapminder1$population1, w = gapminder1$Country, na.rm = TRUE)
+weightedMean(gapminder1$population1, w = gapminder1$Country, na.rm = TRUE)
+```
+
+The weighted mean is much lower than that of the actual mean when Countries are considered. This mean that there is a big different between population of some countries.
+
+```{population-continue}
+p <- ggplot(gapminder1, aes(reorder(region, population1, FUN=function(x) mean(log10(x))), population1))
+p <- p + scale_y_log10()
+p + geom_boxplot(outlier.colour="red") + geom_jitter(alpha=1/2)
+```
+
+
+---
+
+## Working with Country data
+### Comparison between India and China
+```{r population-ind-china}
+# Creating subset of India Country
+population_india <- gapminder1 %>% filter(Country=='India')
+# Creating subset of India Country
+population_china <- gapminder1 %>% filter(Country=='China')
+
+ggplot(data= population_india, mapping = aes(y=Year, x=population1, color="India"))  + geom_point(data = gapminder1, aes(color="Others")) + geom_jitter()
+
+ggplot(data= population_china, mapping = aes(y=Year, x=population1, color="China")) + geom_point(data = gapminder1, aes(color="Others")) + geom_jitter()
+
+```
+
+The population in India and China has risen exponentially after 1950 as compared to other countries.
+
+### India and China after 1950
+```{r population-india-china-1950}
+gapminder1 %>% #Filtering data for India
+ filter(Country=='India') %>%
+summarize('LifeExpected (Mean) in India'=mean(population1),
+ 'Population (Standard Deviation) in India'=sd(population1))
+
+#Filtering data for India after 1950
+pop_ind_after_1950 <- population_india %>% filter(Year > '1950')
+
+b <- ggplot(pop_ind_after_1950, aes(x = population1, y = life))
+b + geom_point()+geom_smooth(method = "lm") + scale_x_continuous(labels = scales::comma) + labs(title="India Population vs Life after 1950")
+
+c <- ggplot(pop_ind_after_1950, aes(x = population1, y = income))
+c + geom_point()+geom_smooth(method = "lm") + scale_x_continuous(labels = scales::comma) + labs(title="India Population vs Income after 1950") 
+
+
+gapminder1 %>%filter(Country=='China') %>%#Filtering data for India
+summarize('LifeExpected (Mean) in China'=mean(population1),
+ 'Population (Standard Deviation) in China'=sd(population1))
+
+#Filtering data for India after 1950
+pop_chn_after_1950 <- population_china %>% filter(Year > '1950')
+
+b <- ggplot(pop_chn_after_1950, aes(x = population1, y = life))
+b + geom_point()+geom_smooth(method = "lm") + scale_x_continuous(labels = scales::comma) + labs(title="China Population vs Life after 1950") 
+
+c <- ggplot(pop_chn_after_1950, aes(x = population1, y = income))
+c + geom_point()+geom_smooth(method = "lm") + scale_x_continuous(labels = scales::comma)  + labs(title="China Population vs Income after 1950")
+
+```
+We can see here there income rose for China and India after population crossed 1.1 billion. However, the rise in life expectancy reduced when the population crossed 600 million and flattened between 55 to 65 years.
 
 ---
 
@@ -167,8 +250,8 @@ Calucating the standard deviation for America in 2015:
 ```{r le-america-2015}
 gapminder_2015 %>% #compute stats
  filter(region=='America') %>%
-summarize('LifeExpected (Mean) in America for 2015'=mean(life),
- 'LifeExpected (Standard Deviation) in America for 2015'=sd(life))
+summarize('LifeExpectancy (Mean) in America for 2015'=mean(life),
+ 'LifeExpectancy (Standard Deviation) in America for 2015'=sd(life))
 ```
 
 ### America and United States in 2015
@@ -200,11 +283,14 @@ While comparing United States to America, the Life expectancy of United States i
 
 ---
 
-Income
+**Income**<br />
 Income for some of the regions are higher than compared to other regions.
-In 2015, average Income Middle East & North Africa has been the highest compared to South Asia where it recorded lowest average income.
+In 2015, average Income Middle East & North Africa has been the highest compared to South Asia where it recorded lowest average income. **Income rises when the population remains lower.**
 The average income is 12397 across all region, but if the regions are considered, then the income reduces to 3900, meaning that income in some of the region is much lower than that of other regions.
 
-Life Expectancy
-We find that life expectancy in the given dataset is higher in the range of 25-35 years. The mean of Life Expectancy in 2015 for Sub-Saharan Africa region is lower than all other regions, while Europe & Central Asia is highest.
+**Life Expectancy**<br />
+We find that life expectancy in the given dataset is higher in the range of 25-35 years. The mean of Life Expectancy in 2015 for Sub-Saharan Africa region is lower than all other regions, while Europe & Central Asia is highest. **There is a relationship between Life Exepectancy and income. As the life expectancy grows above 60, the income levels rises higher.**
 When magnified the analysis to American region, the life Expectancy is nearly 75%. Though the average life expectancy of America improve from below average to above average from 1800 to 2015, the life expectancy of United States has been highest than most of the American countries from 1800 to 2015.
+
+**Population**<br />
+We see that India and China are higher in population than other countries. **There is a exponential growth in these countries after 1950.** We also saw that population causes a flattening effect on life expectancy (over 600 million) and also extreme population (over 1 billion) witnesses an increased growth in income.
